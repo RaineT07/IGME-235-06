@@ -1,0 +1,36 @@
+h1 {
+    border-bottom: 10px solid #1c3738;
+    text-align:center;
+}
+html{
+    background-color: #4d4847;
+    color: #d6ffe2;
+}
+body{
+    margin-left:10vw;
+    margin-right:10vw;
+}
+img#side {
+    float:right; 
+    margin: 0 12px;
+    width:20%;
+    height:20%;
+}
+p#readable{
+    font-size:large;
+    font-family:serif, Georgia;
+}
+h2.personal{
+    font-family: sans-serif, Verdana;
+    font-weight: lighter;
+}
+blockquote{
+    background-color: #8baaad;
+    color: #000f08;
+    display:inline-block;
+}
+li.topic-list{
+    display:inline-block;
+    margin-left:5vw;
+    margin-right:5vw;
+}
