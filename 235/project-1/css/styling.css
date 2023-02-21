@@ -180,7 +180,7 @@ div#stadium{
 #orange-tip{
     color:black;
     position:relative;
-    top:110px;
+    top:140px;
     margin:20px;
     width:120px;
     font-family: sans-serif;
@@ -191,7 +191,7 @@ div#stadium{
 #grey-tip{
     color:white;
     position:relative;
-    top:150px;
+    top:170px;
     width:120px;
     margin:20px;
     font-size: 0.8rem;
