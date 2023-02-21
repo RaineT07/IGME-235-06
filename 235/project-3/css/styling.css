@@ -1,0 +1,123 @@
+Body{
+	background-color: rgb(210, 245, 245);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+div#map-container{
+
+	left:15vw;
+	padding:0;
+	display:inline-block;
+	position:absolute;
+	z-index: 0;
+}
+
+
+h2{
+	position:fixed;
+	top:68%;
+	left:25%;
+	font-size: 3rem;
+	font-family:'Bungee', cursive, Times, serif;
+}
+ul{
+	position: fixed;
+	list-style: none;
+	top:73%;
+	left: 45%;
+	line-height: 3rem;
+	font-size: 2rem;
+	font-family:'Righteous',cursive, sans-serif;
+}
+
+span.gameObject{
+	height:32px;
+	width:32px;
+	position: absolute;
+	left:-100px;
+	top:-100px;
+	z-index:100;
+	background-color: black;
+	background: url(../images/megaPixelSpriteSheet.png);
+}
+
+
+span.player{
+    background:url(../images/megaPixelSpriteSheet.png);
+	background-position: -160px -896px;
+    z-index:1000;
+    transition-property: all;
+    transition-duration:.25s;
+}
+span.cell{
+    height:32px;
+	width:32px;
+	/* border: 1px solid #333; actual width & height is 32px because of border */
+	background-color: #ccc;
+	padding:0;
+	margin:0;
+	position:absolute;
+}
+span.cellSelected{
+	height:32px;
+	width:32px;
+	border:0;
+	background-color: greenyellow;
+	padding:0;
+	margin:0;
+	position:absolute;
+}
+span.floor{
+	height:32px;
+	width:32px;
+	background: url(../images/Stone.png);
+	background-position: -4px -4px;
+}
+span.wall{
+	height:32px;
+	width:32px;
+	background: url(../images/Wall.png);
+	background-position: -48px -101px;
+}
+span.grass{
+	height: 32px;
+	width: 32px;
+	background: url(../images/Grass.png);
+	background-position: -148px -64px;
+}
+span.water{
+	height:32px;
+	width:32px;
+	background: url(../images/spr_terrain.png);
+	background-position: -128px -225px;
+}
+span.door{
+	height:32px;
+	width:32px;
+	background:url(../images/Props.png);
+	background-position: -32px -114px;
+}
+
+span.monster1{
+	position:absolute;
+	left:-100px;
+	top:-100px;
+	z-index:500;
+	background-position: -192px -896px;
+}
+span.monster2{
+	position:absolute;
+	left:-100px;
+	top:-100px;
+	z-index:500;
+	background-position: -224px -896px;
+}
+span.treasure1{
+	position:absolute;
+	left:-100px;
+	top:-100px;
+	z-index:500;
+	background-position: -128px -128px;
+}

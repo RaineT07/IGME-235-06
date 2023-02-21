@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/project-css.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Raleway&family=Roboto:wght@300&display=swap" rel="stylesheet">
+<script src="js/main.js"></script>
+</head>
+<body>
+    <div id="menu">
+        <header>
+            <h1>Find a new anime to watch</h1>
+        </header>
+        <div class="options">
+            Search by name:
+            <input type="text" id="name-search">
+        </div>
+        <div class="options">
+            Order by:
+            <select id="order-by">
+                <option value=""></option>
+                <option value="title">title</option>
+                <option value="start_date">start date</option>
+                <option value="end_date">end date</option>
+                <option value="episodes">episodes</option>
+                <option value="rating">rating</option>
+            </select>
+        </div>
+        <div class="options">
+            Airing status:
+            <select id="Airing">
+                <option value=""></option>
+                <option value="airing">airing currently</option>
+                <option value="completed">completed</option>
+                <option value="upcoming">upcoming</option>
+            </select>
+        </div>
+        <div class="options">
+            <button id="searchButton" type="button">Click me to search</button>
+        </div>
+        <div class="options" id="genreList">
+            <span><input type="checkbox" class="genre" name="Action" value="1"> Action</span>
+            <span><input type="checkbox" class="genre" name="Adventure" value="2"> Adventure</span>
+            <span><input type="checkbox" class="genre" name="Cars" value="3"> Racing</span>
+            <span><input type="checkbox" class="genre" name="Comedy" value="4"> Comedy</span>
+            <span><input type="checkbox" class="genre" name="Avante Garde" value="5"> Avante Garde</span>
+            <span><input type="checkbox" class="genre" name="Demons" value="6"> Demons</span>
+            <span><input type="checkbox" class="genre" name="Mystery" value="7"> Mystery</span>
+            <span><input type="checkbox" class="genre" name="Drama" value="8"> Drama</span>
+            <span><input type="checkbox" class="genre" name="Fantasy" value="10"> Fantasy</span>
+            <span><input type="checkbox" class="genre" name="Game" value="11"> Game</span>
+            <span><input type="checkbox" class="genre" name="Historical" value="13"> Historical</span>
+            <span><input type="checkbox" class="genre" name="Horror" value="14"> Horror</span>
+            <span><input type="checkbox" class="genre" name="Kids" value="15"> Kids</span>
+            <span><input type="checkbox" class="genre" name="Martial Arts" value="17"> Martial Arts</span>
+            <span><input type="checkbox" class="genre" name="Mecha" value="18"> Mecha</span>
+            <span><input type="checkbox" class="genre" name="Music" value="19"> Music</span>
+            <span><input type="checkbox" class="genre" name="Parody" value="20"> Parody</span>
+            <span><input type="checkbox" class="genre" name="Samurai" value="21"> Samurai</span>
+            <span><input type="checkbox" class="genre" name="Romance" value="22"> Romance</span>
+            <span><input type="checkbox" class="genre" name="School" value="23"> School</span>
+            <span><input type="checkbox" class="genre" name="Sci Fi" value="24"> Sci Fi</span>
+            <span><input type="checkbox" class="genre" name="Shoujo" value="25"> Shoujo</span>
+            <span><input type="checkbox" class="genre" name="Girls Love" value="26"> Girls Love</span>
+            <span><input type="checkbox" class="genre" name="Shounen" value="27"> Shounen</span>
+            <span><input type="checkbox" class="genre" name="Boys Love" value="28"> Boys Love</span>
+            <span><input type="checkbox" class="genre" name="Space" value="29"> Space</span>
+            <span><input type="checkbox" class="genre" name="Sports" value="30"> Sports</span>
+            <span><input type="checkbox" class="genre" name="Super Power" value="31"> Super Power</span>
+            <span><input type="checkbox" class="genre" name="Vampire" value="32"> Vampire</span>
+            <span><input type="checkbox" class="genre" name="Harem" value="35"> Harem</span>
+            <span><input type="checkbox" class="genre" name="Slice of Life" value="36"> Slice of Life</span>
+            <span><input type="checkbox" class="genre" name="Supernatural" value="37"> Supernatural</span>
+            <span><input type="checkbox" class="genre" name="Military" value="38"> Military</span>
+            <span><input type="checkbox" class="genre" name="Police" value="39"> Police</span>
+            <span><input type="checkbox" class="genre" name="Psychological" value="40"> Psychological</span>
+            <span><input type="checkbox" class="genre" name="Suspense" value="41"> Suspense</span>
+            <span><input type="checkbox" class="genre" name="Seinen" value="42"> Seinen</span>
+            <span><input type="checkbox" class="genre" name="Josei" value="43"> Josei</span>
+            <span><input type="checkbox" class="genre" name="Award Winning" value="46"> Award Winning</span>
+            <span><input type="checkbox" class="genre" name="Gourmet" value="47"> Cooking</span>
+            <span><input type="checkbox" class="genre" name="Work Life" value="48"> Work Life</span>
+        </div>
+        <p id="status">here's your results</p>
+    </div>
+    
+    <div id="content"></div>
+</body>
+</html>

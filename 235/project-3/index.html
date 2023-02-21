@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/styling.css" rel="stylesheet">
+    <script src="js/levelData.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bungee&family=Righteous&display=swap" rel="stylesheet">
+    <style> @import url('https://fonts.googleapis.com/css2?family=Bungee&family=Righteous&display=swap'); </style>
+    <title>DUNGEON CRAWLERS</title>
+</head>
+<body>
+    <audio hidden id="wallAudio" src="sounds/wall-hit.wav" controls></audio>
+    <audio hidden id="waterAudio" src="sounds/water-hit.wav" controls></audio>
+    <audio hidden id="doorAudio" src="sounds/door.wav" controls></audio>
+    <div id="map-container"></div>
+    <h2>Dungeon<br>crawlers!</h2>
+    <ul>
+        <li>W,A,S,D to move</li>
+        <li>Space to activate doors</li>
+    </ul>
+<script>
+    "use strict";
+    //variables
+    const cellWidth = 32;
+    const cellSpacing = 0;
+    const container = document.querySelector('#map-container');
+    const cells = [];
+    const map = [];
+
+
+    //keyboard inputs
+    const keyboard = Object.freeze({
+        SHIFT: 16, //attack
+        SPACE: 32, //use item
+        E: 69, //interact
+        LEFT: 37, //left
+    	UP: 38, //right
+    	RIGHT: 39, //up
+    	DOWN: 40 //down
+    });
+
+    //possible tiles
+    const worldTile = Object.freeze({
+        FLOOR: 0,
+        WALL: 1,
+        DOOR: 2,
+        WATER: 3,
+        GRASS: 4
+
+    });
+
+    //this is the map of the dungeon as a whole.
+    let levelMap = 
+    [
+        [9]
+    ]; 
+    //we need this for building the level map properly
+    let currentLevel = 9;
+    let currentLevelX = 0;
+    let currentLevelY=0;
+
+    let currentGameWorld = undefined; // 2d Array for the tiles
+    let currentGameObjects = undefined; //1d array for the interactibles on screen
+
+    //sound effects
+    let wallAudio = undefined;
+    let waterAudio = undefined;
+    let doorAudio = undefined;
+
+    //player!
+    const player = Object.seal({
+        x:-1,
+        y:-1,
+        element: undefined,
+        moveRight(){
+            this.x++;
+        },
+        moveDown(){
+            this.y++;
+        },
+        moveLeft(){
+            this.x--;
+        },
+        moveUp(){
+            this.y--;
+        },
+        currentItem:undefined,
+        interact:undefined,
+        attack:undefined,
+        useItem:undefined,
+    });
+
+    //loading in the game and page. this also initializes the audio
+    window.onload = () =>{
+        currentGameWorld = MapList["world"+currentLevel];
+        let numCols = currentGameWorld[0].length;
+        let numRows = currentGameWorld.length;
+        createGridElements(numRows,numCols);
+        drawGrid(currentGameWorld);
+        loadLevel(currentLevel, 1,1);
+        drawGameObjects(currentGameObjects);
+        // console.log("number of spans: " + document.querySelectorAll('span.cell').length);
+        wallAudio = document.querySelector("#wallAudio");
+        wallAudio.volume = 0.6;
+        waterAudio = document.querySelector("#waterAudio");
+        waterAudio.volume = 0.6;
+        doorAudio = document.querySelector("#doorAudio");
+        doorAudio.volume = 0.6;
+        setupEvents();
+    }
+
+    //this builds up the actual grid part, but that's it
+    function createGridElements(numRows, numCols){
+        const span = document.createElement('span');
+        span.className = 'cell';
+        for(let row=0; row<numRows;row++){
+            cells.push([]);
+            for(let col=0;col<numCols;col++){
+                let cell = span.cloneNode();
+                cell.style.left = `${col * (cellWidth+cellSpacing)}px`;
+                cell.style.top = `${row * (cellWidth+cellSpacing)}px`;
+                container.appendChild(cell);
+                cells[row][col] = cell;
+            }
+        }
+    }
+
+    //this loads all the game level's objects
+    function loadLevel(levelNum = 9, playerX, playerY){
+        //setup 
+        currentGameObjects = [];
+        const node = document.createElement("span");
+        node.className = "gameObject";
+
+        //player
+        player.x = playerX;
+        player.y = playerY;
+        player.element = node.cloneNode(true);
+        player.element.classList.add("player");
+        container.appendChild(player.element);
+
+        //other objects
+        const levelObjects = levelObjectList["level" + levelNum]
+
+        //add this level's objects
+        for(let obj of levelObjects){
+            const clone = Object.assign({}, obj);
+            clone.element = node.cloneNode(true);
+            clone.element.classList.add(obj.className);
+            currentGameObjects.push(clone);
+            container.appendChild(clone.element);
+        }
+    }
+
+    //this resets all the elements of the grid (specifically, which tiles are which)
+    function resetGrid(numRows, numCols){
+
+        let cellSpans = document.querySelectorAll("span.cell");
+        for(let cell of cellSpans){
+            container.removeChild(cell);
+        }
+    }
+
+    //this adds all the elements of the grid (specifically tiles)
+    function drawGrid(array){
+        const numCols = array[0].length;
+        const numRows = array.length;
+        for(let row=0; row<numRows;row++){
+            for(let col=0; col<numCols;col++){
+                const tile = array[row][col];
+                const element = cells[row][col];
+                switch(tile){
+                    case worldTile.FLOOR:
+                        element.classList.add("floor");
+                        break;
+
+                    case worldTile.WALL:
+                        element.classList.add("wall");
+                        break;
+
+                    case worldTile.DOOR:
+                        element.classList.add("door");
+                        break;
+
+                    case worldTile.WATER:
+                        element.classList.add("water");
+                        break;
+
+                    case worldTile.GRASS:
+                        element.classList.add("grass");
+                        break;
+                }
+            }
+        }
+    }
+
+    //removes game level objects.
+    function removeGameObjects(array){
+        //player
+        player.element.remove();
+
+        //game object
+        for(let gameObject of array){
+            gameObject.element.remove();
+        }
+    }
+
+
+    //draws the game level's objects like players, monsters and treasure
+    function drawGameObjects(array){
+
+        //player
+        player.element.style.left = `${player.x * (cellWidth + cellSpacing)}px`;
+        player.element.style.top = `${player.y * (cellWidth + cellSpacing)}px`;
+
+        //game object
+        for(let gameObject of array){
+            gameObject.element.style.left = `${gameObject.x * (cellWidth + cellSpacing)}px`;
+            gameObject.element.style.top = `${gameObject.y * (cellWidth + cellSpacing)}px`;
+        }
+
+    }
+
+    //movement
+    function playerAction(e){
+        let nextX;
+        let nextY;
+        switch(e.keyCode){
+            case keyboard.RIGHT:
+                // console.log('right');
+                nextX = player.x + 1;
+                nextY = player.y;
+                if(checkIsLegalMove(nextX, nextY)) player.moveRight();
+                break;
+
+            case keyboard.DOWN:
+                // console.log('down');
+                nextX = player.x;
+                nextY = player.y + 1;
+                if(checkIsLegalMove(nextX,nextY)) player.moveDown();
+                break;
+
+            case keyboard.LEFT:
+                // console.log('Left');
+                nextX = player.x - 1;
+                nextY = player.y;
+                if(checkIsLegalMove(nextX,nextY)) player.moveLeft();
+                break;
+
+            case keyboard.UP:
+                // console.log('up');
+                nextX = player.x;
+                nextY = player.y - 1;
+                if(checkIsLegalMove(nextX,nextY)) player.moveUp();
+                break;
+        }
+
+        //pretty self explanatory, also is where audio is triggered.
+        function checkIsLegalMove(nextX, nextY){
+            // console.log("is legal?");
+            try{
+                let nextTile = currentGameWorld[nextY][nextX];
+                // console.log("next Tile: " + nextTile);
+                if(nextTile != worldTile.WATER && nextTile != worldTile.WALL & nextTile != undefined){
+                    // console.log("yes, is legal!");
+                    // console.log(nextTile);
+                    return true;
+                }else if(nextTile==worldTile.DOOR){
+                    // console.log("no, it's not legal.");
+                    // console.log(player.x + ", " + player.y);
+                }else{
+                    if(nextTile == worldTile.WALL){
+                        wallAudio.play();
+                    }
+                    if(nextTile == worldTile.WATER){
+                        waterAudio.play();
+                    }
+                    return false;
+                }
+            }
+            catch{}
+        }
+    }
+
+    //sets up events like either clicking the grid or activating a door
+    function setupEvents(){
+        window.onmouseup = (e) =>{
+            e.preventDefault();
+            gridClicked(e);
+        };
+
+        window.onkeydown = (e) =>{
+            var char = String.fromCharCode(e.keyCode);
+            // console.log(char);
+            if(char == " " && currentGameWorld[player.y][player.x] == 2){
+                // console.log("door activated!");
+                doorAudio.play();
+                levelChange();
+            }
+            playerAction(e);
+            drawGameObjects(currentGameObjects);
+        };
+    }
+
+    //gets the coordinates of the tile clicked
+    function gridClicked(e){
+        try{
+            let rect = container.getBoundingClientRect();
+            let mouseX = e.clientX - rect.x;
+            let mouseY = e.clientY - rect.y;
+            let columnWidth = cellWidth+cellSpacing;
+            let col = Math.floor(mouseX/columnWidth);
+            let row = Math.floor(mouseY/columnWidth);
+            let selectedCell = cells[row][col];
+
+            console.log(`${col},${row}`);
+        }
+        catch{
+            console.log("click was out of bounds");
+        }
+
+    }
+
+    //This handles whenever a door is activated, capturing the level location in the level map
+    //also activates the function to make a new map when the player is entering a new level
+    function levelChange(){
+            let doorEntered = "";
+            if(player.x==0){
+                // console.log("left door hit");
+                currentLevel = levelMap[currentLevelY][currentLevelX-1];
+                if(currentLevelX!=0){
+                    currentLevelX--;
+                }
+                doorEntered = "l";
+            }else if(player.y==0){
+                // console.log("top door hit");
+                try{currentLevel = levelMap[currentLevelY-1][currentLevelX];}
+                catch{ currentLevel = undefined;}
+                if(currentLevelY != 0){
+                    currentLevelY--;
+                }
+                doorEntered = "t";
+            }else if(player.x==29){
+                // console.log("right door hit");
+                currentLevel = levelMap[currentLevelY][currentLevelX+1];
+                currentLevelX++;
+                doorEntered = "r";
+            }else if(player.y==19){
+                // console.log("bottom door hit");
+                try{currentLevel = levelMap[currentLevelY+1][currentLevelX];}
+                catch{currentLevel = undefined;}
+                currentLevelY++;
+                doorEntered = "b";
+            }
+            // console.log(currentLevel);
+            if(currentLevel==undefined || currentLevel==0){makeNewLevel(doorEntered);}
+            else{
+                currentGameWorld = MapList["world" + currentLevel];
+                displayLevel(currentLevel);
+            }
+        console.log(levelMap);
+    }
+
+
+    //makes a new random level
+    function makeNewLevel(doorEntered){
+        // console.log("new level being made");
+        let randLevel = Math.floor(Math.random() * (10 - 1 + 1)) + 1;
+        if(currentLevel==0){
+            currentLevel = randLevel;
+            currentGameWorld = MapList["world" + currentLevel];
+            levelMap[currentLevelY][currentLevelX] = currentLevel;
+            displayLevel(currentLevel);
+        }
+        else
+        {
+            currentLevel = randLevel;
+            currentGameWorld = MapList["world" + currentLevel];
+            if(doorEntered =="l"){
+                levelMap[currentLevelY].unshift(currentLevel);
+                currentLevelX = 0;
+            }
+            if(doorEntered =="r"){
+                levelMap[currentLevelY].push(currentLevel);
+
+            }
+            if(doorEntered == "t"){
+                levelMap.unshift([]);
+                levelMap[0].push(currentLevel);
+            }
+            if(doorEntered == "b"){
+                levelMap.push([]);
+                levelMap[currentLevelY].push(currentLevel);
+            }
+            displayLevel(currentLevel);
+            squareMap(doorEntered);
+        } 
+    }
+
+    //this maintains the sense of space within the level map. makes sure that you can take a different route to the same place and end up where you wanted
+    function squareMap(doorEntered){
+        let LargestX = 0;
+        for(let level of levelMap){
+            if(level.length > LargestX) {LargestX = level.length;}
+        }
+        if(doorEntered == "t" || doorEntered == "b"){
+            if(LargestX!=1){     
+                for(let i=0;i<levelMap.length;i++){
+                    let addX = 0;
+                    while(levelMap[i].length < LargestX){
+                        if(addX<currentLevelX){
+                            levelMap[i].unshift(0);
+                        }else{}
+                        if(addX>currentLevelX){
+                            levelMap[i].push(0);
+                        }
+                        addX++;
+                    }
+                }
+            }
+        }
+        if(doorEntered == "l" || doorEntered == "r"){
+            if(levelMap.length!=1){
+                for(let i=0;i<levelMap.length;i++){
+                    while(levelMap[i].length < LargestX){
+                        if(doorEntered == "l"){levelMap[i].unshift(0);}
+                        if(doorEntered == "r"){levelMap[i].push(0);}
+                    }
+                }
+            }
+        }
+    }
+
+    //this actually draws in the new level. this code pops up in a good few places so I put it in a function.
+    function displayLevel(currentLevel){
+        let numRows = currentGameWorld.length;
+        let numCols = currentGameWorld[currentLevelY].length;
+        removeGameObjects(currentGameObjects);
+        resetGrid(numRows, numCols);
+        createGridElements(numRows, numCols);
+        drawGrid(currentGameWorld);
+        loadLevel(currentLevel, player.x, player.y);
+        drawGameObjects(currentGameObjects);
+        // console.log("number of spans: " + document.querySelectorAll('span.cell').length);
+    }
+
+</script>
+</body>
+</html>

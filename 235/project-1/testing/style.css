@@ -1,0 +1,32 @@
+div {
+    box-sizing: border-box;
+    border: 1px solid black;
+    padding: 20px;
+    text-align: center;
+}
+
+#container{
+    display:grid;
+    height:100vh;
+    grid-template-rows:2fr 10fr 1.5fr;
+    grid-template-columns:1fr 10fr 1fr;
+    grid-template-areas:"header header header"
+                        "left-sidebar main right-sidebar"
+                        "left-sidebar footer right-sidebar"
+}
+
+#header{
+    grid-area: header;
+}
+#left_sidebar{
+    grid-area:left-sidebar;
+}
+#main{
+    grid-area:main;
+}
+#right_sidebar{
+    grid-area:right-sidebar;
+}
+#footer{
+    grid-area: footer;
+}
